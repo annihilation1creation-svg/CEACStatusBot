@@ -39,6 +39,9 @@ def query_status(location, application_num, passport_number, surname, captchaHan
 
         # Find captcha image
         captcha = soup.find(name="img", id="c_status_ctl00_contentplaceholder1_defaultcaptcha_CaptchaImage")
+        if captcha is None:
+            page_title = soup.title.get_text(strip=True) if soup.title else "(no title)"
+            raise RuntimeError(f"CEAC CAPTCHA image missing: HTTP {r.status_code}, title={page_title!r}")
         image_url = ROOT + captcha["src"]
         img_resp = session.get(image_url)
 
